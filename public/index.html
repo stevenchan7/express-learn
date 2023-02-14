@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <form>
+      <input type="text" name="name" id="name" placeholder="Name" autocomplete="off" autofocus/>
+      <button type="submit" id="post-button">POST</button>
+    </form>
+  </div>
+  <div id="result"></div>
+
+  <!-- axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+  // get result div element
+  const result = document.getElementById('result');
+
+    async function getData() {
+      const response = await fetch('/api/task');
+      // console.log(response);
+      const data = await response.json();
+      // console.log(data);
+      // console.log(data.data);
+      const tasks = data.data.map((task) => {
+        return `<h5>${task.task}</h5>`;
+      });
+      // console.log(tasks);
+      result.innerHTML = tasks.join('');
+      // data is a promises, so access 'real' data from promise's resolve
+      // data.then((a) => {
+      //   // console.log(a); // return res.json() from API
+      //   // console.log(a.data); // return list of tasks
+      // })
+    }
+    getData();
+
+    // Handle post
+    // Wait until DOM loaded
+    const button = document.getElementById('post-button');
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('name');
+      const taskValue = input.value;
+      const { data } = await axios.post('/api/task', { task: taskValue });
+      console.log(data.task);
+      const h5 = document.createElement('h5')
+      h5.textContent = data.task
+      console.log(h5);
+      result.appendChild(h5)
+    });
+  </script>
+</body>
+</html>
